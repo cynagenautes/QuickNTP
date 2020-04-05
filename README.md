@@ -24,9 +24,10 @@ Using a custom DNS it's not possible to sync the time with Nintendo's servers, a
 
 ## Credit
 
-- [@3096] for SwitchTime who gave me the initial idea and some code examples
-- [@thedax] for NX-ntpc, used by [@3096]
-- [@WerWolv] for libtesla
+- [@3096](https://github.com/3096) for SwitchTime who gave me the initial idea and some code examples
+- [@thedax](https://github.com/thedax) for NX-ntpc, used by [@3096]
+- [@SanketDG](https://github.com/SanketDG) for the [NTP Client](https://github.com/SanketDG/c-projects/blob/master/ntp-client.c) using `getaddrinfo` instead of `gethostbyname`
+- [@WerWolv](https://github.com/WerWolv) for libtesla
 - [NTP Pool Project](https://www.ntppool.org)
 
 ## Disclaimer
