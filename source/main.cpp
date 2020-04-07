@@ -94,29 +94,30 @@ private:
         setMessage("");
     }
 
-    inline void operationBlock(std::function<void()> f) {
-        setMessage("");
-        blockFlag = true;
-        f();
-        blockFlag = false;
+    bool operationBlock(std::function<void()> f) {
+        if (!blockFlag) {
+            blockFlag = true;
+            setMessage("");
+            f(); // TODO: Call async and set blockFlag to false
+            blockFlag = false;
+        }
+        return !blockFlag;
     }
 
-    std::function<bool(u64 keys)> syncListener = [=](u64 keys) {
-        if (!blockFlag && keys & KEY_A) {
-            operationBlock([=]() {
+    std::function<bool(u64 keys)> syncListener = [this](u64 keys) {
+        if (keys & KEY_A) {
+            return operationBlock([&]() {
                 setTime();
             });
-            return true;
         }
         return false;
     };
 
-    std::function<bool(u64 keys)> offsetListener = [=](u64 keys) {
-        if (!blockFlag && keys & KEY_Y) {
-            operationBlock([=]() {
+    std::function<bool(u64 keys)> offsetListener = [this](u64 keys) {
+        if (keys & KEY_Y) {
+            return operationBlock([&]() {
                 getOffset();
             });
-            return true;
         }
         return false;
     };
@@ -134,11 +135,11 @@ public:
         list->addItem(new tsl::elm::CategoryHeader("Pick server   |   \uE0E0  Sync   |   \uE0E3  Offset"));
 
         auto* trackbar = new tsl::elm::NamedStepTrackBar("\uE017", NTPSERVERS[0]);
-        trackbar->setValueChangedListener([=](u8 val) {
+        trackbar->setValueChangedListener([this](u8 val) {
             currentServer = val;
             serverChanged();
         });
-        trackbar->setClickListener([=](u8 val) {
+        trackbar->setClickListener([this](u8 val) {
             return syncListener(val) || offsetListener(val);
         });
         list->addItem(trackbar);
@@ -153,12 +154,11 @@ public:
                       50);
 
         auto* getOffsetItem = new tsl::elm::ListItem("Get offset");
-        getOffsetItem->setClickListener([=](u64 keys) {
-            if (!blockFlag && keys & KEY_A) {
-                operationBlock([=]() {
+        getOffsetItem->setClickListener([this](u64 keys) {
+            if (keys & KEY_A) {
+                return operationBlock([&]() {
                     getOffset();
                 });
-                return true;
             }
             return false;
         });
@@ -169,20 +169,12 @@ public:
                       }),
                       50);
 
-        list->addItem(new tsl::elm::CustomDrawerUnscissored([=](tsl::gfx::Renderer* renderer, s32 x, s32 y, s32 w, s32 h) {
-            renderer->drawString(Message, false, x + 5, tsl::cfg::FramebufferHeight - 100, 20, renderer->a(tsl::style::color::ColorText));
+        list->addItem(new tsl::elm::CustomDrawerUnscissored([& message = Message](tsl::gfx::Renderer* renderer, s32 x, s32 y, s32 w, s32 h) {
+            renderer->drawString(message, false, x + 5, tsl::cfg::FramebufferHeight - 100, 20, renderer->a(tsl::style::color::ColorText));
         }));
 
         frame->setContent(list);
         return frame;
-    }
-
-    virtual void update() override {}
-
-    virtual bool handleInput(u64 keysDown, u64 keysHeld, touchPosition touchInput,
-                             JoystickPosition leftJoyStick,
-                             JoystickPosition rightJoyStick) override {
-        return false;
     }
 };
 
@@ -201,9 +193,6 @@ public:
         timeExit();
         smExit();
     }
-
-    virtual void onShow() override {}
-    virtual void onHide() override {}
 
     virtual std::unique_ptr<tsl::Gui> loadInitialGui() override {
         return initially<NtpGui>();
