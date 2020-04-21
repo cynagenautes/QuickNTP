@@ -9,22 +9,11 @@
 #include "servers.hpp"
 #include "tesla-ext.hpp"
 
-char* strdup(const char* s) {
-    size_t slen = strlen(s);
-    char* result = (char*)malloc(slen + 1);
-    if (result == NULL) {
-        return NULL;
-    }
-
-    memcpy(result, s, slen + 1);
-    return result;
-}
-
 TimeServiceType __nx_time_service_type = TimeServiceType_System;
 
 class NtpGui : public tsl::Gui {
 private:
-    char* Message;
+    std::string Message;
     int currentServer = 0;
     bool blockFlag = false;
     std::vector<std::string> serverAddresses;
@@ -33,14 +22,14 @@ private:
         return &serverAddresses[currentServer][0];
     }
 
-    void setMessage(const char* fmt, ...) {
+    void setMessage(const char* fmt = "", ...) {
         char buff[200];
         va_list va;
         va_start(va, fmt);
         vsnprintf(buff, sizeof(buff), fmt, va);
         va_end(va);
 
-        Message = strdup(buff);
+        Message = buff;
     }
 
     bool setNetworkSystemClock(time_t time) {
@@ -91,13 +80,13 @@ private:
     }
 
     void serverChanged() {
-        setMessage("");
+        setMessage();
     }
 
     bool operationBlock(std::function<void()> f) {
         if (!blockFlag) {
             blockFlag = true;
-            setMessage("");
+            setMessage();
             f(); // TODO: Call async and set blockFlag to false
             blockFlag = false;
         }
@@ -124,11 +113,11 @@ private:
 
 public:
     NtpGui() : serverAddresses(NTPSERVERS[1].begin(), NTPSERVERS[1].end()) {
-        setMessage("");
+        setMessage();
     }
 
     virtual tsl::elm::Element* createUI() override {
-        auto frame = new tsl::elm::OverlayFrame("QuickNTP", "by NedEX - v1.0.0");
+        auto frame = new tsl::elm::OverlayFrame("QuickNTP", "by NedEX - v1.1.0");
 
         auto list = new tsl::elm::List();
 
@@ -170,7 +159,9 @@ public:
                       50);
 
         list->addItem(new tsl::elm::CustomDrawerUnscissored([& message = Message](tsl::gfx::Renderer* renderer, s32 x, s32 y, s32 w, s32 h) {
-            renderer->drawString(message, false, x + 5, tsl::cfg::FramebufferHeight - 100, 20, renderer->a(tsl::style::color::ColorText));
+            if (!message.empty()) {
+                renderer->drawString(message.c_str(), false, x + 5, tsl::cfg::FramebufferHeight - 100, 20, renderer->a(tsl::style::color::ColorText));
+            }
         }));
 
         frame->setContent(list);
