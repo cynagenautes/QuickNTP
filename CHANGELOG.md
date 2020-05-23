@@ -1,0 +1,19 @@
+# Changelog
+
+## [1.1.0] - 2020-04-21
+
+### Updated
+
+- libnx @ [20fd5bb](https://github.com/switchbrew/libnx/commit/20fd5bb9a21cd0c8bcea0cc7cc84640f8de714e6)
+- libtesla @ [f59a3f4](https://github.com/WerWolv/libtesla/commit/f59a3f44d46a70ac62b9b1098635d6cb36e18e38)
+
+### Changed
+
+- Use `std::string` instead of `char*` for user messages
+
+## [1.0.0] - 2020-04-05
+
+- First release
+
+[1.1.0]: https://github.com/nedex/QuickNTP/compare/1.0.0...1.1.0
+[1.0.0]: https://github.com/nedex/QuickNTP/releases/tag/1.0.0

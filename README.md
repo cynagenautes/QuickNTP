@@ -1,5 +1,7 @@
 # QuickNTP
 
+[![QuickNTP badge][version-badge]][changelog] [![GPLv2 License Badge][license-badge]][license]
+
 Syncs the Nintendo Switch time with a list of NTP Servers.
 
 ![Preview](https://user-images.githubusercontent.com/389887/78499263-e9fcc500-774f-11ea-9392-60bd19d21ad8.jpg)
@@ -25,12 +27,21 @@ Using a custom DNS it's not possible to sync the time with Nintendo's servers, a
 ## Credit
 
 - [@3096](https://github.com/3096) for SwitchTime who gave me the initial idea and some code examples
-- [@thedax](https://github.com/thedax) for NX-ntpc, used by [@3096]
+- [@thedax](https://github.com/thedax) for NX-ntpc, used by [@3096](https://github.com/3096)
 - [@SanketDG](https://github.com/SanketDG) for the [NTP Client](https://github.com/SanketDG/c-projects/blob/master/ntp-client.c) using `getaddrinfo` instead of `gethostbyname`
 - [@WerWolv](https://github.com/WerWolv) for libtesla
 - [NTP Pool Project](https://www.ntppool.org)
+
+## Troubleshooting
+
+- The "Synchronize Clock via Internet" option should be enabled in System settings [as described here](https://en-americas-support.nintendo.com/app/answers/detail/a_id/22557/p/989/c/188) since this program changes the "Network clock"
 
 ## Disclaimer
 
 - Please don't send a lot of requests. NTP servers should be requested in 36 hours intervals
 - This program changes NetworkSystemClock, which may cause a desync between console and servers. Use at your own risk! It is recommended that you only use the changed clock while offline, and change it back as soon as you are connected (either manually or using ntp.org server.)
+
+[version-badge]: https://img.shields.io/github/v/release/nedex/QuickNTP
+[changelog]: ./CHANGELOG.md
+[license-badge]: https://img.shields.io/github/license/nedex/QuickNTP
+[license]: ./LICENSE
