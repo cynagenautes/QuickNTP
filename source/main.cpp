@@ -117,7 +117,7 @@ public:
     }
 
     virtual tsl::elm::Element* createUI() override {
-        auto frame = new tsl::elm::OverlayFrame("QuickNTP", "by NedEX - v1.1.0");
+        auto frame = new tsl::elm::OverlayFrame("QuickNTP", "by NedEX - v1.1.1");
 
         auto list = new tsl::elm::List();
 

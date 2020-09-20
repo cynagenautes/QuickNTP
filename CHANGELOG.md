@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1] - 2020-09-20
+
+### Updated
+
+- libnx @ [v3.3.0](https://github.com/switchbrew/libnx/releases/tag/v3.3.0)
+- libtesla @ [a68af19](https://github.com/WerWolv/libtesla/commit/a68af19eda8e2b1d51008a2e1a1b71649460f901)
+
 ## [1.1.0] - 2020-04-21
 
 ### Updated
@@ -15,5 +22,6 @@
 
 - First release
 
+[1.1.1]: https://github.com/nedex/QuickNTP/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/nedex/QuickNTP/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/nedex/QuickNTP/releases/tag/1.0.0
