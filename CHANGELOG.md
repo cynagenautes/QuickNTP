@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0] - 2020-11-21
+
+#### *The future-proof update*
+
+### Added
+
+- New option to set network time to user-set time
+
 ## [1.1.1] - 2020-09-20
 
 ### Updated
@@ -22,6 +30,7 @@
 
 - First release
 
+[1.2.0]: https://github.com/nedex/QuickNTP/compare/1.1.1...1.2.0
 [1.1.1]: https://github.com/nedex/QuickNTP/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/nedex/QuickNTP/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/nedex/QuickNTP/releases/tag/1.0.0

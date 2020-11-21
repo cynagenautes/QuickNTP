@@ -49,7 +49,7 @@ private:
             if (setNetworkSystemClock(ntpTime)) {
                 setMessage("Synced with %s", srv);
             } else {
-                setMessage("Unable to set system clock.");
+                setMessage("Unable to set network clock.");
             }
         } else {
             setMessage("Error: %s", client->getErrorMessage().c_str());
@@ -58,11 +58,34 @@ private:
         delete client;
     }
 
+    void setNetworkTimeAsUser() {
+        time_t userTime, netTime;
+
+        Result rs = timeGetCurrentTime(TimeType_UserSystemClock, (u64*)&userTime);
+        if (R_FAILED(rs)) {
+            setMessage("GetTimeUser %x", rs);
+            return;
+        }
+
+        std::string usr = "User time!";
+        std::string gr8 = "";
+        rs = timeGetCurrentTime(TimeType_NetworkSystemClock, (u64*)&netTime);
+        if (!R_FAILED(rs) && netTime < userTime) {
+            gr8 = " Great Scott!";
+        }
+
+        if (setNetworkSystemClock(userTime)) {
+            setMessage(usr.append(gr8).c_str());
+        } else {
+            setMessage("Unable to set network clock.");
+        }
+    }
+
     void getOffset() {
         time_t currentTime;
-        Result rs = timeGetCurrentTime(TimeType_UserSystemClock, (u64*)&currentTime);
+        Result rs = timeGetCurrentTime(TimeType_NetworkSystemClock, (u64*)&currentTime);
         if (R_FAILED(rs)) {
-            setMessage("timeGetCurrentTime %x", rs);
+            setMessage("GetTimeNetwork %x", rs);
             return;
         }
 
@@ -117,9 +140,17 @@ public:
     }
 
     virtual tsl::elm::Element* createUI() override {
-        auto frame = new tsl::elm::OverlayFrame("QuickNTP", "by NedEX - v1.1.1");
+        auto frame = new tsl::elm::CustomOverlayFrame("QuickNTP", "by NedEX - v1.2.0");
 
         auto list = new tsl::elm::List();
+
+        list->setClickListener([this](u64 keys) {
+            if (keys & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT)) {
+                setMessage();
+                return true;
+            }
+            return false;
+        });
 
         list->addItem(new tsl::elm::CategoryHeader("Pick server   |   \uE0E0  Sync   |   \uE0E3  Offset"));
 
@@ -156,9 +187,25 @@ public:
         list->addItem(new tsl::elm::CustomDrawer([](tsl::gfx::Renderer* renderer, s32 x, s32 y, s32 w, s32 h) {
                           renderer->drawString("Gets the seconds offset with the selected server.\n\n\uE016  A value of ± 3 seconds is acceptable.", false, x + 20, y + 20, 15, renderer->a(tsl::style::color::ColorDescription));
                       }),
+                      70);
+
+        auto* setToInternalItem = new tsl::elm::ListItem("User-set time");
+        setToInternalItem->setClickListener([this](u64 keys) {
+            if (keys & KEY_A) {
+                return operationBlock([&]() {
+                    setNetworkTimeAsUser();
+                });
+            }
+            return false;
+        });
+        list->addItem(setToInternalItem);
+
+        list->addItem(new tsl::elm::CustomDrawer([](tsl::gfx::Renderer* renderer, s32 x, s32 y, s32 w, s32 h) {
+                          renderer->drawString("Sets the network time to the user-set time.", false, x + 20, y + 20, 15, renderer->a(tsl::style::color::ColorDescription));
+                      }),
                       50);
 
-        list->addItem(new tsl::elm::CustomDrawerUnscissored([& message = Message](tsl::gfx::Renderer* renderer, s32 x, s32 y, s32 w, s32 h) {
+        list->addItem(new tsl::elm::CustomDrawerUnscissored([&message = Message](tsl::gfx::Renderer* renderer, s32 x, s32 y, s32 w, s32 h) {
             if (!message.empty()) {
                 renderer->drawString(message.c_str(), false, x + 5, tsl::cfg::FramebufferHeight - 100, 20, renderer->a(tsl::style::color::ColorText));
             }
