@@ -24,7 +24,11 @@ Using a custom DNS it's not possible to sync the time with Nintendo's servers, a
 - Pick the closest NTP server based on user region
 - Update the time with milliseconds (maybe a system limitation)
 
-## Credit
+## Contributors
+
+- [@DarkMatterCore](https://github.com/DarkMatterCore)
+
+## Credits
 
 - [@3096](https://github.com/3096) for SwitchTime who gave me the initial idea and some code examples
 - [@thedax](https://github.com/thedax) for NX-ntpc, used by [@3096](https://github.com/3096)
