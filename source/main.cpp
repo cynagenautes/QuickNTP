@@ -117,7 +117,7 @@ private:
     }
 
     std::function<bool(u64 keys)> syncListener = [this](u64 keys) {
-        if (keys & KEY_A) {
+        if (keys & HidNpadButton_A) {
             return operationBlock([&]() {
                 setTime();
             });
@@ -126,7 +126,7 @@ private:
     };
 
     std::function<bool(u64 keys)> offsetListener = [this](u64 keys) {
-        if (keys & KEY_Y) {
+        if (keys & HidNpadButton_Y) {
             return operationBlock([&]() {
                 getOffset();
             });
@@ -140,12 +140,12 @@ public:
     }
 
     virtual tsl::elm::Element* createUI() override {
-        auto frame = new tsl::elm::CustomOverlayFrame("QuickNTP", "by NedEX - v1.2.0");
+        auto frame = new tsl::elm::CustomOverlayFrame("QuickNTP", "by NedEX - v1.2.1");
 
         auto list = new tsl::elm::List();
 
         list->setClickListener([this](u64 keys) {
-            if (keys & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT)) {
+            if (keys & (HidNpadButton_AnyUp | HidNpadButton_AnyDown | HidNpadButton_AnyLeft | HidNpadButton_AnyRight)) {
                 setMessage();
                 return true;
             }
@@ -175,7 +175,7 @@ public:
 
         auto* getOffsetItem = new tsl::elm::ListItem("Get offset");
         getOffsetItem->setClickListener([this](u64 keys) {
-            if (keys & KEY_A) {
+            if (keys & HidNpadButton_A) {
                 return operationBlock([&]() {
                     getOffset();
                 });
@@ -191,7 +191,7 @@ public:
 
         auto* setToInternalItem = new tsl::elm::ListItem("User-set time");
         setToInternalItem->setClickListener([this](u64 keys) {
-            if (keys & KEY_A) {
+            if (keys & HidNpadButton_A) {
                 return operationBlock([&]() {
                     setNetworkTimeAsUser();
                 });
