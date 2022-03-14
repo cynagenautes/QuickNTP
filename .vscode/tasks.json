@@ -4,17 +4,19 @@
     {
       "label": "Make",
       "type": "shell",
-      "command": "make clean && make",
+      "command": "make",
       "problemMatcher": "$gcc",
+      "dependsOn": ["Clean"],
       "group": {
         "kind": "build",
         "isDefault": true
       }
     },
     {
-      "label": "Make clean",
+      "label": "Clean",
       "type": "shell",
-      "command": "make clean"
+      "command": "make clean",
+      "problemMatcher": ["$gcc"]
     }
   ]
 }
