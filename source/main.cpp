@@ -104,7 +104,7 @@ private:
     }
 
     std::function<std::function<bool(u64 keys)>(int key)> syncListener = [this](int key) {
-        return [=](u64 keys) {
+        return [=, this](u64 keys) {
             if (keys & key) {
                 return operationBlock([&]() {
                     setTime();
@@ -115,7 +115,7 @@ private:
     };
 
     std::function<std::function<bool(u64 keys)>(int key)> offsetListener = [this](int key) {
-        return [=](u64 keys) {
+        return [=, this](u64 keys) {
             if (keys & key) {
                 return operationBlock([&]() {
                     getOffset();
