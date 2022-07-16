@@ -1,7 +1,6 @@
 #define TESLA_INIT_IMPL
 #include <tesla.hpp>
 
-#include <stdarg.h>
 #include <string>
 #include <vector>
 
@@ -22,16 +21,6 @@ private:
         return &serverAddresses[currentServer][0];
     }
 
-    void setMessage(const char* fmt = "", ...) {
-        char buff[200];
-        va_list va;
-        va_start(va, fmt);
-        vsnprintf(buff, sizeof(buff), fmt, va);
-        va_end(va);
-
-        Message = buff;
-    }
-
     bool setNetworkSystemClock(time_t time) {
         Result rs = timeSetCurrentTime(TimeType_NetworkSystemClock, (uint64_t)time);
         if (R_FAILED(rs)) {
@@ -43,27 +32,29 @@ private:
     void setTime() {
         char* srv = getCurrentServer();
         NTPClient* client = new NTPClient(srv);
-        time_t ntpTime = client->getTime();
 
-        if (!client->hasFailed()) {
+        try {
+            time_t ntpTime = client->getTime();
+
             if (setNetworkSystemClock(ntpTime)) {
-                setMessage("Synced with %s", srv);
+                Message = "Synced with " + std::string(srv);
             } else {
-                setMessage("Unable to set network clock.");
+                Message = "Unable to set network clock.";
             }
-        } else {
-            setMessage("Error: %s", client->getErrorMessage().c_str());
+        } catch (NtpException& e) {
+            Message = "Error: " + e.what();
         }
 
         delete client;
     }
 
-    void setNetworkTimeAsUser() {
+    void
+    setNetworkTimeAsUser() {
         time_t userTime, netTime;
 
         Result rs = timeGetCurrentTime(TimeType_UserSystemClock, (u64*)&userTime);
         if (R_FAILED(rs)) {
-            setMessage("GetTimeUser %x", rs);
+            Message = "GetTimeUser " + std::to_string(rs);
             return;
         }
 
@@ -75,9 +66,9 @@ private:
         }
 
         if (setNetworkSystemClock(userTime)) {
-            setMessage(usr.append(gr8).c_str());
+            Message = usr.append(gr8);
         } else {
-            setMessage("Unable to set network clock.");
+            Message = "Unable to set network clock.";
         }
     }
 
@@ -85,68 +76,68 @@ private:
         time_t currentTime;
         Result rs = timeGetCurrentTime(TimeType_NetworkSystemClock, (u64*)&currentTime);
         if (R_FAILED(rs)) {
-            setMessage("GetTimeNetwork %x", rs);
+            Message = "GetTimeNetwork " + std::to_string(rs);
             return;
         }
 
         char* srv = getCurrentServer();
         NTPClient* client = new NTPClient(srv);
-        time_t ntpTimeOffset = client->getTimeOffset(currentTime);
 
-        if (!client->hasFailed()) {
-            setMessage("Offset: %+ds", ntpTimeOffset);
-        } else {
-            setMessage("Error: %s", client->getErrorMessage().c_str());
+        try {
+            time_t ntpTimeOffset = client->getTimeOffset(currentTime);
+            Message = "Offset: " + std::to_string(ntpTimeOffset) + "s";
+        } catch (NtpException& e) {
+            Message = "Error: " + e.what();
         }
 
         delete client;
     }
 
-    void serverChanged() {
-        setMessage();
-    }
-
-    bool operationBlock(std::function<void()> f) {
+    bool operationBlock(std::function<void()> fn) {
         if (!blockFlag) {
             blockFlag = true;
-            setMessage();
-            f(); // TODO: Call async and set blockFlag to false
+            Message = "";
+            fn(); // TODO: Call async and set blockFlag to false
             blockFlag = false;
         }
         return !blockFlag;
     }
 
-    std::function<bool(u64 keys)> syncListener = [this](u64 keys) {
-        if (keys & HidNpadButton_A) {
-            return operationBlock([&]() {
-                setTime();
-            });
-        }
-        return false;
+    std::function<std::function<bool(u64 keys)>(int key)> syncListener = [this](int key) {
+        return [=](u64 keys) {
+            if (keys & key) {
+                return operationBlock([&]() {
+                    setTime();
+                });
+            }
+            return false;
+        };
     };
 
-    std::function<bool(u64 keys)> offsetListener = [this](u64 keys) {
-        if (keys & HidNpadButton_Y) {
-            return operationBlock([&]() {
-                getOffset();
-            });
-        }
-        return false;
+    std::function<std::function<bool(u64 keys)>(int key)> offsetListener = [this](int key) {
+        return [=](u64 keys) {
+            if (keys & key) {
+                return operationBlock([&]() {
+                    getOffset();
+                });
+            }
+            return false;
+        };
     };
 
 public:
     NtpGui() : serverAddresses(NTPSERVERS[1].begin(), NTPSERVERS[1].end()) {
-        setMessage();
+        Message = "";
     }
 
     virtual tsl::elm::Element* createUI() override {
-        auto frame = new tsl::elm::CustomOverlayFrame("QuickNTP", "by NedEX - v1.2.1");
+        auto frame = new tsl::elm::CustomOverlayFrame("QuickNTP", "by NedEX - v1.2.5");
 
         auto list = new tsl::elm::List();
 
         list->setClickListener([this](u64 keys) {
             if (keys & (HidNpadButton_AnyUp | HidNpadButton_AnyDown | HidNpadButton_AnyLeft | HidNpadButton_AnyRight)) {
-                setMessage();
+                Message = "";
                 return true;
             }
             return false;
@@ -157,15 +148,15 @@ public:
         auto* trackbar = new tsl::elm::NamedStepTrackBar("\uE017", NTPSERVERS[0]);
         trackbar->setValueChangedListener([this](u8 val) {
             currentServer = val;
-            serverChanged();
+            Message = "";
         });
         trackbar->setClickListener([this](u8 val) {
-            return syncListener(val) || offsetListener(val);
+            return syncListener(HidNpadButton_A)(val) || offsetListener(HidNpadButton_Y)(val);
         });
         list->addItem(trackbar);
 
         auto* syncTimeItem = new tsl::elm::ListItem("Sync time");
-        syncTimeItem->setClickListener(syncListener);
+        syncTimeItem->setClickListener(syncListener(HidNpadButton_A));
         list->addItem(syncTimeItem);
 
         list->addItem(new tsl::elm::CustomDrawer([](tsl::gfx::Renderer* renderer, s32 x, s32 y, s32 w, s32 h) {
@@ -174,14 +165,7 @@ public:
                       50);
 
         auto* getOffsetItem = new tsl::elm::ListItem("Get offset");
-        getOffsetItem->setClickListener([this](u64 keys) {
-            if (keys & HidNpadButton_A) {
-                return operationBlock([&]() {
-                    getOffset();
-                });
-            }
-            return false;
-        });
+        getOffsetItem->setClickListener(offsetListener(HidNpadButton_A));
         list->addItem(getOffsetItem);
 
         list->addItem(new tsl::elm::CustomDrawer([](tsl::gfx::Renderer* renderer, s32 x, s32 y, s32 w, s32 h) {

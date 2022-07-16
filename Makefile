@@ -38,7 +38,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #   NACP building is skipped as well.
 #---------------------------------------------------------------------------------
 APP_TITLE	:=	QuickNTP
-APP_VERSION :=	1.2.1
+APP_VERSION :=	1.2.5
 
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
@@ -58,7 +58,7 @@ CFLAGS	:=	-g -Wall -O2 -ffunction-sections \
 
 CFLAGS	+=	$(INCLUDE) -D__SWITCH__
 
-CXXFLAGS	:= $(CFLAGS) -fno-exceptions -std=c++17
+CXXFLAGS	:= $(CFLAGS) -std=c++17
 
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
