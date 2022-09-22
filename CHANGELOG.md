@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.6] - 2022-09-22
+
+### Added
+
+- Cloudflare and Google NTP servers ( Thanks to [@DraconicNEO](https://github.com/DraconicNEO)! )
+
+### Changed
+
+- Underlying servers list structure for better readability
+
 ## [1.2.5] - 2022-07-16
 
 ### Updated
@@ -53,6 +63,7 @@ Thanks to [@DarkMatterCore](https://github.com/DarkMatterCore)!
 
 - First release
 
+[1.2.6]: https://github.com/nedex/QuickNTP/compare/1.2.5...1.2.6
 [1.2.5]: https://github.com/nedex/QuickNTP/compare/1.2.1...1.2.5
 [1.2.1]: https://github.com/nedex/QuickNTP/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/nedex/QuickNTP/compare/1.1.1...1.2.0

@@ -1,19 +1,24 @@
 # QuickNTP
 
+---
+
+### Update your Nintendo Switch clock using a list of public NTP servers
+
+Using a custom DNS (or a limited connection) it's not possible to update your clock with Nintendo's servers and the Switch appears to gain some minutes each month.
+
+With this [Tesla](https://github.com/WerWolv/libtesla) plugin you can now quickly update your clock connecting to a public [NTP](https://en.wikipedia.org/wiki/Network_Time_Protocol) server!
+
 [![QuickNTP badge][version-badge]][changelog] [![GPLv2 License Badge][license-badge]][license]
 
-Syncs the Nintendo Switch time with a list of NTP Servers.
+---
 
-![Preview](https://user-images.githubusercontent.com/389887/78499263-e9fcc500-774f-11ea-9392-60bd19d21ad8.jpg)
+![Preview](https://user-images.githubusercontent.com/389887/191822037-254e038d-a878-4ab1-9e3d-d98f00051974.png)
 
 ## Features
 
 - Update the time by selecting from a list of servers
 - Show the current offset against the selected server
-
-## Motivation
-
-Using a custom DNS it's not possible to sync the time with Nintendo's servers, and the Switch appears to gain some minutes each month.
+- Set the internal network time to the time set by the user in system settings (time traveling, yay!)
 
 ## Possible future features
 
@@ -26,19 +31,28 @@ Using a custom DNS it's not possible to sync the time with Nintendo's servers, a
 
 ## Contributors
 
-- [@DarkMatterCore](https://github.com/DarkMatterCore)
+- [@DarkMatterCore](https://github.com/DarkMatterCore) (library updates)
+- [@DraconicNEO](https://github.com/DraconicNEO) (new NTP servers)
 
 ## Credits
 
-- [@3096](https://github.com/3096) for SwitchTime who gave me the initial idea and some code examples
-- [@thedax](https://github.com/thedax) for NX-ntpc, used by [@3096](https://github.com/3096)
+### Code and libraries
+
+- [@3096](https://github.com/3096) for `SwitchTime` who gave me the initial idea and some code examples
+- [@thedax](https://github.com/thedax) for `NX-ntpc`, used by [@3096](https://github.com/3096)
 - [@SanketDG](https://github.com/SanketDG) for the [NTP Client](https://github.com/SanketDG/c-projects/blob/master/ntp-client.c) using `getaddrinfo` instead of `gethostbyname`
-- [@WerWolv](https://github.com/WerWolv) for libtesla
+- [@WerWolv](https://github.com/WerWolv) for `libtesla`
+
+### NTP Public servers
+
 - [NTP Pool Project](https://www.ntppool.org)
+- [Cloudflare Time Services](https://www.cloudflare.com/time/)
+- [Google Public NTP](https://developers.google.com/time)
+- [NIST Internet Time Servers](https://tf.nist.gov/tf-cgi/servers.cgi)
 
 ## Troubleshooting
 
-- The "Synchronize Clock via Internet" option should be enabled in System settings [as described here](https://en-americas-support.nintendo.com/app/answers/detail/a_id/22557/p/989/c/188) since this program changes the "Network clock"
+- The "Synchronize Clock via Internet" option should be enabled in System settings [as described here](https://en-americas-support.nintendo.com/app/answers/detail/a_id/22557/p/989/c/188), since this program changes the "Network clock" (immutable in settings).
 
 ## Disclaimer
 
