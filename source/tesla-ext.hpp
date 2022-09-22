@@ -1,5 +1,8 @@
 #include <tesla.hpp>
 
+#include <string>
+#include <vector>
+
 namespace tsl::elm {
 class CustomDrawerUnscissored : public Element {
 public:
@@ -29,5 +32,39 @@ public:
             this->m_contentElement->invalidate();
         }
     }
+};
+
+class NamedStepTrackBarVector : public StepTrackBar {
+public:
+    /**
+     * @brief Constructor
+     *
+     * @param icon Icon shown next to the track bar
+     * @param stepDescriptions Step names displayed above the track bar
+     */
+    NamedStepTrackBarVector(const char icon[3], std::vector<std::string> stepDescriptions)
+        : StepTrackBar(icon, stepDescriptions.size()), m_stepDescriptions(stepDescriptions.begin(), stepDescriptions.end()) {}
+
+    virtual ~NamedStepTrackBarVector() {}
+
+    virtual void draw(gfx::Renderer* renderer) override {
+
+        u16 trackBarWidth = this->getWidth() - 95;
+        u16 stepWidth = trackBarWidth / (this->m_numSteps - 1);
+
+        for (u8 i = 0; i < this->m_numSteps; i++) {
+            renderer->drawRect(this->getX() + 60 + stepWidth * i, this->getY() + 50, 1, 10, a(tsl::style::color::ColorFrame));
+        }
+
+        u8 currentDescIndex = std::clamp(this->m_value / (100 / (this->m_numSteps - 1)), 0, this->m_numSteps - 1);
+
+        auto [descWidth, descHeight] = renderer->drawString(this->m_stepDescriptions[currentDescIndex].c_str(), false, 0, 0, 15, tsl::style::color::ColorTransparent);
+        renderer->drawString(this->m_stepDescriptions[currentDescIndex].c_str(), false, ((this->getX() + 60) + (this->getWidth() - 95) / 2) - (descWidth / 2), this->getY() + 20, 15, a(tsl::style::color::ColorDescription));
+
+        StepTrackBar::draw(renderer);
+    }
+
+protected:
+    std::vector<std::string> m_stepDescriptions;
 };
 } // namespace tsl::elm

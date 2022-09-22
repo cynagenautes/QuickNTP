@@ -12,13 +12,14 @@ TimeServiceType __nx_time_service_type = TimeServiceType_System;
 
 class NtpGui : public tsl::Gui {
 private:
-    std::string Message;
+    std::string Message = "";
     int currentServer = 0;
     bool blockFlag = false;
     std::vector<std::string> serverAddresses;
+    std::vector<std::string> serverNames;
 
-    char* getCurrentServer() {
-        return &serverAddresses[currentServer][0];
+    std::string getCurrentServerAddress() {
+        return serverAddresses[currentServer];
     }
 
     bool setNetworkSystemClock(time_t time) {
@@ -30,14 +31,14 @@ private:
     }
 
     void setTime() {
-        char* srv = getCurrentServer();
-        NTPClient* client = new NTPClient(srv);
+        std::string srv = getCurrentServerAddress();
+        NTPClient* client = new NTPClient(srv.c_str());
 
         try {
             time_t ntpTime = client->getTime();
 
             if (setNetworkSystemClock(ntpTime)) {
-                Message = "Synced with " + std::string(srv);
+                Message = "Synced with " + srv;
             } else {
                 Message = "Unable to set network clock.";
             }
@@ -80,8 +81,8 @@ private:
             return;
         }
 
-        char* srv = getCurrentServer();
-        NTPClient* client = new NTPClient(srv);
+        std::string srv = getCurrentServerAddress();
+        NTPClient* client = new NTPClient(srv.c_str());
 
         try {
             time_t ntpTimeOffset = client->getTimeOffset(currentTime);
@@ -126,9 +127,8 @@ private:
     };
 
 public:
-    NtpGui() : serverAddresses(NTPSERVERS[1].begin(), NTPSERVERS[1].end()) {
-        Message = "";
-    }
+    NtpGui() : serverAddresses(vectorPairValues(NTPSERVERS)),
+               serverNames(vectorPairKeys(NTPSERVERS)) {}
 
     virtual tsl::elm::Element* createUI() override {
         auto frame = new tsl::elm::CustomOverlayFrame("QuickNTP", "by NedEX - v1.2.5");
@@ -145,7 +145,7 @@ public:
 
         list->addItem(new tsl::elm::CategoryHeader("Pick server   |   \uE0E0  Sync   |   \uE0E3  Offset"));
 
-        auto* trackbar = new tsl::elm::NamedStepTrackBar("\uE017", NTPSERVERS[0]);
+        auto* trackbar = new tsl::elm::NamedStepTrackBarVector("\uE017", serverNames);
         trackbar->setValueChangedListener([this](u8 val) {
             currentServer = val;
             Message = "";

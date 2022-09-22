@@ -1,6 +1,14 @@
-#include <initializer_list>
-#include <string>
+#include "vector-pair.hpp"
 
-std::initializer_list<std::string> NTPSERVERS[2] = {
-    {"NTP Pool - Main", "NIST - Main", "NTP Pool - Africa", "NTP Pool - Asia", "NTP Pool - Europe", "NTP Pool - North America", "NTP Pool - Oceania", "NTP Pool - South America", "Cloudflare NTP", "Google NTP"},
-    {"pool.ntp.org", "time.nist.gov", "africa.pool.ntp.org", "asia.pool.ntp.org", "europe.pool.ntp.org", "north-america.pool.ntp.org", "oceania.pool.ntp.org", "south-america.pool.ntp.org", "time.cloudflare.com", "time.google.com"}};
+vector_pair NTPSERVERS = {
+    {"NTP Pool - Main", "pool.ntp.org"},
+    {"Cloudflare", "time.cloudflare.com"},
+    {"Google", "time.google.com"},
+    {"NIST - Main", "time.nist.gov"},
+    {"NTP Pool - Africa", "africa.pool.ntp.org"},
+    {"NTP Pool - Asia", "asia.pool.ntp.org"},
+    {"NTP Pool - Europe", "europe.pool.ntp.org"},
+    {"NTP Pool - North America", "north-america.pool.ntp.org"},
+    {"NTP Pool - Oceania", "oceania.pool.ntp.org"},
+    {"NTP Pool - South America", "south-america.pool.ntp.org"},
+};
