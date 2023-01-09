@@ -17,6 +17,11 @@
       "type": "shell",
       "command": "make clean",
       "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Docker make",
+      "type": "shell",
+      "command": "docker run --rm -v ${PWD}:/${workspaceFolderBasename} -w /${workspaceFolderBasename} devkitpro/devkita64 make clean && make"
     }
   ]
 }
