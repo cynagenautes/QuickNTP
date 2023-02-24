@@ -45,10 +45,10 @@ With this [Tesla](https://github.com/WerWolv/libtesla) plugin you can now quickl
 
 ### NTP Public servers
 
-- [NTP Pool Project](https://www.ntppool.org)
+- [NICT公開NTPサービス](https://jjy.nict.go.jp/tsp/PubNtp/index.html)
+- [インターネットマルチフィード(MFEED) 時刻情報提供サービス for Public](https://www.mfeed.ad.jp/ntp/)
 - [Cloudflare Time Services](https://www.cloudflare.com/time/)
 - [Google Public NTP](https://developers.google.com/time)
-- [NIST Internet Time Servers](https://tf.nist.gov/tf-cgi/servers.cgi)
 
 ## Troubleshooting
 
