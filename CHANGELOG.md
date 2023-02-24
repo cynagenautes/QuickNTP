@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.7] - 2023-02-24
+
+### Updated
+
+- libtesla @ [b32acbc](https://github.com/WerWolv/libtesla/commit/b32acbca64c78bf37bc456bd386cd6b7148842c81)
+
 ## [1.2.6] - 2022-09-22
 
 ### Added
@@ -63,6 +69,7 @@ Thanks to [@DarkMatterCore](https://github.com/DarkMatterCore)!
 
 - First release
 
+[1.2.7]: https://github.com/nedex/QuickNTP/compare/1.2.6...1.2.7
 [1.2.6]: https://github.com/nedex/QuickNTP/compare/1.2.5...1.2.6
 [1.2.5]: https://github.com/nedex/QuickNTP/compare/1.2.1...1.2.5
 [1.2.1]: https://github.com/nedex/QuickNTP/compare/1.2.0...1.2.1
