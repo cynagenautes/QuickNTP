@@ -21,7 +21,7 @@
     {
       "label": "Docker make",
       "type": "shell",
-      "command": "docker run --rm -v ${PWD}:/${workspaceFolderBasename} -w /${workspaceFolderBasename} devkitpro/devkita64 make clean && make"
+      "command": "docker run --rm -v ${PWD}:/${workspaceFolderBasename} -w /${workspaceFolderBasename} devkitpro/devkita64 /bin/bash -c 'make clean && make'"
     }
   ]
 }
